@@ -1,0 +1,257 @@
+<html lang="zh-cn">
+
+<head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta content="width=device-width,initial-scale=1.0" name="viewport">
+    <meta content="yes" name="apple-mobile-web-app-capable">
+    <meta content="black" name="apple-mobile-web-app-status-bar-style">
+    <meta content="telephone=no" name="format-detection">
+    <meta content="email=no" name="format-detection">
+    <title>系统管理</title>
+    <link rel="stylesheet" href="docs/assets/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="dist/bootstrap-table.css">
+    <link rel="stylesheet" href="https://cdn.bootcss.com/jquery-treegrid/0.2.0/css/jquery.treegrid.min.css">
+</head>
+
+<body>
+<div class="container">
+    <h1>Table Treegrid</h1>
+    <table class="tree">
+        <tr class="treegrid-1">
+            <td>Root node</td>
+            <td>Additional info</td>
+        </tr>
+        <tr class="treegrid-2 treegrid-parent-1">
+            <td>Node 1-1</td>
+            <td>Additional info</td>
+        </tr>
+        <tr class="treegrid-3 treegrid-parent-1">
+            <td>Node 1-2</td>
+            <td>Additional info</td>
+        </tr>
+        <tr class="treegrid-4 treegrid-parent-3">
+            <td>Node 1-2-1</td>
+            <td>Additional info</td>
+        </tr>
+    </table>
+
+    <br/><br/><br/><br/>
+
+    <table id="table"></table>
+
+</div>
+<script src="docs/assets/js/jquery.min.js"></script>
+<script src="docs/assets/bootstrap/js/bootstrap.min.js"></script>
+<script src="dist/bootstrap-table.js"></script>
+<script src="src/extensions/treegrid/bootstrap-table-treegrid.js"></script>
+<script src="node_modules/jquery-treegrid/js/jquery.treegrid.js"></script>
+<!--<script src="https://cdn.bootcss.com/jquery-treegrid/0.2.0/js/jquery.treegrid.min.js"></script>-->
+<script type="text/javascript">
+    var $table = $('#table');
+    $(function () {
+        var list = [
+            {
+                "id": 1,
+                "pid": 0,
+                "status": 1,
+                "name": "系统管理",
+                "permissionValue": "open:system:get"
+            },
+            {
+                "id": 2,
+                "pid": 0,
+                "status": 1,
+                "name": "字典管理",
+                "permissionValue": "open:dict:get"
+            },
+            {
+                "id": 20,
+                "pid": 1,
+                "status": 1,
+                "name": "新增系统",
+                "permissionValue": "open:system:add"
+            },
+            {
+                "id": 21,
+                "pid": 1,
+                "status": 1,
+                "name": "编辑系统",
+                "permissionValue": "open:system:edit"
+            },
+            {
+                "id": 22,
+                "pid": 1,
+                "status": 1,
+                "name": "删除系统",
+                "permissionValue": "open:system:delete"
+            },
+            {
+                "id": 33,
+                "pid": 2,
+                "status": 1,
+                "name": "系统环境",
+                "permissionValue": "open:env:get"
+            },
+            {
+                "id": 333,
+                "pid": 33,
+                "status": 1,
+                "name": "新增环境",
+                "permissionValue": "open:env:add"
+            },
+            {
+                "id": 3333,
+                "pid": 33,
+                "status": 1,
+                "name": "编辑环境",
+                "permissionValue": "open:env:edit"
+            },
+            {
+                "id": 233332,
+                "pid": 33,
+                "status": 0,
+                "name": "删除环境",
+                "permissionValue": "open:env:delete"
+            }
+        ];
+        $table.bootstrapTable({
+            data: list,
+            url: 'treegrid.json',
+            height: $(window).height(),
+            idField: 'id',
+            columns: [
+                {
+                    field: 'ck',
+                    checkbox: true
+                },
+                {
+                    field: 'name',
+                    title: '名称'
+                },
+                // {field: 'id', title: '编号', sortable: true, align: 'center'},
+                // {field: 'pid', title: '所属上级'},
+                {
+                    field: 'status',
+                    title: '状态',
+                    sortable: true,
+                    align: 'center',
+                    formatter: 'statusFormatter'
+                },
+                {
+                    field: 'permissionValue',
+                    title: '权限值'
+                }
+            ],
+            // bootstrap-table-tree-column.js 插件配置
+            // treeShowField: 'name',
+            // parentIdField: 'pid'
+            // bootstrap-table-tree-column.js 插件配置
+
+            // bootstrap-table-treegrid.js 插件配置
+            treeShowField: 'name',
+            parentIdField: 'pid',
+            onLoadSuccess: function (data) {
+                console.log('load');
+                // jquery.treegrid.js
+                $table.treegrid({
+                    // initialState: 'collapsed',
+                    treeColumn: 1,
+                    // expanderExpandedClass: 'glyphicon glyphicon-minus',
+                    // expanderCollapsedClass: 'glyphicon glyphicon-plus',
+//                    onChange: function() {
+//                        $table.bootstrapTable('resetWidth');
+//                    },
+//                    onCollapse: function() {
+//                        console.log("Collapsed: "+$(this).attr("id"));
+//                    },
+                    getChildNodes: function(id, treegridContainer) {
+                        var templateClass = "treegrid-parent-" + id;
+                        return treegridContainer.find('tr.' + templateClass);
+                    },
+
+
+                    onChange: function () {
+
+
+
+//                        var currentNode = $(this).attr('class');
+//                        var currentId = currentNode.split(' ')[0].slice(9);
+//                        var isCollapse = $(this).hasClass('selected');
+//                        var childNode = $('#table').find('.treegrid-parent-' + currentId);
+//
+//                        /**
+//                         * 操作父节点，子节点变化
+//                         */
+//                        if (childNode.length != 0) {
+//                            if (isCollapse) {
+//                                $(childNode).find('input[type="checkbox"]').prop('checked', true);
+//                                $(childNode).addClass('selected');
+//                            } else {
+//                                $(childNode).find('input[type="checkbox"]').prop('checked', false);
+//                                $(childNode).removeClass('selected');
+//                            }
+//                        }
+//                        /**
+//                         * 操作子节点，父节点变化
+//                         */
+
+                    },
+                    onCollapse: function () {
+                        console.log("Collapsed: " + $(this).attr("class"));
+                    },
+                    onExpand: function () {
+                        console.log("Expanded " + $(this).attr("class"));
+                    }
+                });
+                $('#node-1').on("change", function () {
+                    console.log("Event from " + $(this).attr("class"));
+                });
+
+            }
+            // bootstrap-table-treetreegrid.js 插件配置
+        });
+
+
+//        $('.tree').treegrid({
+//            onChange: function () {
+//                console.log("Changed: " + $(this).attr("class"));
+//            },
+//            onCollapse: function () {
+//                console.log("Collapsed: " + $(this).attr("class"));
+//            },
+//            onExpand: function () {
+//                console.log("Expanded " + $(this).attr("class"));
+//            }
+//        });
+        $('#node-1').on("change", function () {
+            console.log("Event from " + $(this).attr("class"));
+        });
+    });
+
+
+    // 格式化类型
+    function typeFormatter(value, row, index) {
+        if (value === 'menu') {
+            return '菜单';
+        }
+        if (value === 'button') {
+            return '按钮';
+        }
+        if (value === 'api') {
+            return '接口';
+        }
+        return '-';
+    }
+
+    // 格式化状态
+    function statusFormatter(value, row, index) {
+        if (value === 1) {
+            return '<span class="label label-success">正常</span>';
+        } else {
+            return '<span class="label label-default">锁定</span>';
+        }
+    }
+</script>
+</body>
+</html>
