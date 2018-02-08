@@ -638,6 +638,8 @@
                     $this.treegrid('renderExpander');
                     $this.treegrid('getChildNodes').treegrid('render');
                 }
+
+                //判断tbody 是否全选／全不选
                 if ($this.treegrid('isNode')) {
                     var allNodes = $this.treegrid('getAllNodes');
                     var allSame = true;
@@ -653,14 +655,19 @@
                 }
             });
         },
+
+        //复选框变化
         checkboxRender: function () {
             return $(this).each(function () {
                 var $this = $(this);
-                if ($this.treegrid('getChildNodes').length == 0 || $this.treegrid('getParentNode') != null) {  //操作子节点，判断是否为父节点
+
+                //操作子节点
+                if ($this.treegrid('getChildNodes').length == 0 || $this.treegrid('getParentNode') != null) {  //判断是否为父节点
                     $this.treegrid('renderParentCheckbox');
                     flag1 = false;
                 }
-                if ($this.treegrid('getChildNodes').length != 0) {  //操作父节点，判断是否有子节点
+                //操作父节点
+                if ($this.treegrid('getChildNodes').length != 0) {  //判断是否有子节点
                     $this.treegrid('renderChildCheckbox');
                     $this.treegrid('getChildNodes').treegrid('render');
                     flag = false;
