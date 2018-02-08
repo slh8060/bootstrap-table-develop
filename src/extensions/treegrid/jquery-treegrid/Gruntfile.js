@@ -11,6 +11,13 @@ module.exports = function(grunt) {
         src: 'js/jquery.treegrid.js',
         dest: 'js/jquery.treegrid.min.js'
       }
+    },
+    concat: {
+
+        locale_target: {
+            src: ['js/jquery.treegrid.js'],
+            dest: 'dist/jquery.treegrid.min.js'
+        }
     }
   });
 
